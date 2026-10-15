@@ -1,6 +1,6 @@
 ---
 name: matt-dev-workflow
-description: 把常规开发任务串成一条「前半交互、后半无人」的闭环 —— /grill-with-docs 厘清需求后，用户一句 go 即自动出 spec、拆 tracer-bullet tickets、按 frontier 逐张 /implement（/tdd + /code-review + commit），最后汇总交用户验收。
+description: 把常规开发任务串成一条「前半交互、后半无人」的闭环 —— /grill-with-docs 厘清需求后，用户一句 go 即自动出 spec、拆 tracer-bullet tickets、按 frontier 逐张 /implement（/tdd + /code-review + commit），最后汇总交用户验收，并建议用户跑 /retro 收尾。
 ---
 
 # Matt Dev Workflow
@@ -215,3 +215,31 @@ frontier 上**每一张** ticket：
 - 若中途停下：卡点、原因、建议下一步
 
 验收（合并 / 继续 / 返工）由用户决定；不替用户 merge / push。
+
+## 收尾项 — `/retro`（用户触发，不属无人阶段）
+
+最终验收交回用户后，**建议**用户跑 `/retro` 复盘本次会话。它**不是**阶段 4，也**不在**无人阶段内：
+
+- `retro` 声明了 `disable-model-invocation`，只能由用户显式敲 `/retro`。主会话不得自行调用、不得代跑、不得把它写进阶段 3 的 gate 或任何「完成判定」。
+- `retro` 第 4 步要把候选按严重度呈给用户，与「无人阶段不再提问」直接冲突，只能落在验收之后。
+
+它复盘的是**环境**，不是代码：导航指针（`AGENTS.md`）、确定性检查（linter / hook / CI）、判断题规范（`CODING_STANDARDS.md`）、steering 文件瘦身、工具经济性。机械性错误一律落成确定性检查，别写成规范。
+
+本流程已在生产它的原料：3.4 记录的失败形态、停止条件的卡点、各票 review 结论与超时。
+
+### 何时建议跑
+
+- 命中过停止条件 → **强烈建议**
+- 走过 3.4 恢复协议；有票超时 / 测试红 / review 返工 → **强烈建议**
+- 全程一次过、无失败 → 可跳过
+
+### 给 `/retro` 的输入
+
+- **本会话**（orchestrator 会话是主证据）。`/clear` 之前跑；已清空则让 `/retro` 指向本会话日志。
+- `.scratch/<slug>/spec.md` 与 `issues/NN-*.md`，含各票 `## Comments` 里记录的失败形态。
+- `git log` 与 `git diff <base>..HEAD`。
+
+### 边界与盲区
+
+- 不改产品代码；不替用户 merge / push。
+- 主会话只看到子代理的**回报**，看不到子代理会话内的工具经济性与导航摩擦。这两类发现证据不足时，`retro` 应写明缺口，不要编造；必要时由 `retro` 自己提议给子代理回报补字段。
