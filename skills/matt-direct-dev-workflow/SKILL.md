@@ -1,6 +1,6 @@
 ---
 name: matt-direct-dev-workflow
-description: 非 TDD 开发工作流。前半与 matt-dev-workflow 相同（grill-with-docs → spec → tracer-bullet tickets）；实现改为子代理直接交付，不以 tdd 驱动，最后仍做 code-review。要红绿循环时不要用，改走 matt-dev-workflow。
+description: 非 TDD 开发工作流。前半与 matt-dev-workflow 相同（grill-with-docs → spec → tracer-bullet tickets）；实现改为子代理直接交付，不以 tdd 驱动，最后仍做 code-review，并建议用户跑 /retro 收尾。要红绿循环时不要用，改走 matt-dev-workflow。
 ---
 
 # Matt Direct Dev Workflow
@@ -22,6 +22,7 @@ description: 非 TDD 开发工作流。前半与 matt-dev-workflow 相同（gril
 | 2 tickets | `/to-tickets` | 停下来 quiz |
 | 3 实现 | 新子代理，按 ticket **直接交付** | `/implement`、`/implement-spec`、`/implement-with-subagents`、`/tdd` |
 | 3 收尾 | `code-review` 的两轴 | 用新测试代替复审 |
+| 收尾 | 用户显式跑 `/retro`（见文末） | 自动调用它、或把它算进无人阶段 |
 
 `/implement`、`/implement-spec`、`/implement-with-subagents` 的构建步骤都会调用 `/tdd`。直接交付不要走它们。
 
@@ -237,3 +238,31 @@ frontier 上**每一张** ticket：
 - 若中途停下：卡点、原因、建议下一步
 
 验收（合并 / 继续 / 返工）由用户决定；不替用户 merge / push。
+
+## 收尾项 — `/retro`（用户触发，不属无人阶段）
+
+最终验收交回用户后，**建议**用户跑 `/retro` 复盘本次会话。它**不是**阶段 4，也**不在**无人阶段内：
+
+- `retro` 声明了 `disable-model-invocation`，只能由用户显式敲 `/retro`。主会话不得自行调用、不得代跑、不得把它写进阶段 3 的 gate 或任何「完成定义」。
+- `retro` 第 4 步要把候选按严重度呈给用户，与「无人阶段不再提问」直接冲突，只能落在验收之后。
+
+它复盘的是**环境**，不是代码：导航指针（`AGENTS.md`）、确定性检查（linter / hook / CI）、判断题规范（`CODING_STANDARDS.md`）、steering 文件瘦身、工具经济性。机械性错误一律落成确定性检查，别写成规范。
+
+本流程已在生产它的原料：3.4 记录的失败形态、停止条件的卡点、各票复审结论与返工。
+
+### 何时建议跑
+
+- 命中过停止条件 → **强烈建议**
+- 走过 3.4 恢复协议；有票返工 / 复审不过 / 交付物被推翻 → **强烈建议**
+- 全程一次过、无返工 → 可跳过
+
+### 给 `/retro` 的输入
+
+- **本会话**（orchestrator 会话是主证据）。`/clear` 之前跑；已清空则让 `/retro` 指向本会话日志。
+- `.scratch/<slug>/spec.md` 与 `issues/NN-*.md`，含各票 `## Comments` 里记录的失败形态与证据。
+- `git log` 与 `git diff <base>..HEAD`。
+
+### 边界与盲区
+
+- 不改产品代码；不替用户 merge / push。
+- 主会话只看到子代理的**回报**，看不到子代理会话内的工具经济性与导航摩擦。这两类发现证据不足时，`retro` 应写明缺口，不要编造；必要时由 `retro` 自己提议给子代理回报补字段。
