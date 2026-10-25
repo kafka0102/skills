@@ -9,6 +9,8 @@
 
 Agent 实际读取的是 `~/.agents/skills/<name>/SKILL.md`。它是**独立副本**，与本仓库**不是软链关系**：改任何一边都不会自动同步到另一边。
 
+`~/.codex/skills` 已于 2026-10-25 改为指向 `~/.agents/skills` 的**软链**，所以运行时只有一份内容可改、可 diff；不要再往 `~/.codex/skills` 里单独复制。该软链是手工建立的，Codex 应用若在升级时把它换回真实目录，两处会重新漂移——用下面第 4 步的 `diff` 能立刻发现（也可以先 `ls -la ~/.codex | grep skills` 看它还是不是 `-> /Users/<你>/.agents/skills`）。换回真实目录前的原始内容备份在 `~/.codex/skills.bak-20261025`。
+
 - 仓库里改了、没复制到运行时 → **不生效**（agent 读到的还是旧内容）。
 - 运行时里改了、没回流到仓库 → 不进版本控制：**换机器或重装即丢**，也不会出现在任何 diff / 审查里。
 
@@ -23,7 +25,7 @@ Agent 实际读取的是 `~/.agents/skills/<name>/SKILL.md`。它是**独立副�
 
    先 `mkdir -p` 是因为「重装即丢」之后运行时目录可能已不存在，直接 `cp` 到不存在的目录会失败；用 `cp -R skills/<name>/.` 整目录复制（而不是只复制 `SKILL.md`），是为了将来 skill 带上 `scripts/` / `references/` 时不至于静默漏掉。
 3. 反向回流：如果是在运行时副本上先改的（比如临时试验），必须把改动复制回本仓库 `skills/<name>/SKILL.md`，再走正常 git 流程；否则那份改动不进版本控制，换机器或重装即丢。
-4. 两边 `diff` 确认一致，例如：
+4. 两边 `diff` 确认一致，例如（`~/.codex/skills` 是软链时，它和第一行检查的是同一份文件）：
 
    ```sh
    diff -q skills/matt-dev-workflow/SKILL.md ~/.agents/skills/matt-dev-workflow/SKILL.md
