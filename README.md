@@ -2,9 +2,10 @@
 
 本仓库是这些 skill 的**版本化源**：
 
-- 源文件：`skills/matt-dev-workflow/SKILL.md`、`skills/matt-direct-dev-workflow/SKILL.md`、`skills/gitlab-issues/SKILL.md`
+- 源文件：`skills/matt-dev-workflow/SKILL.md`、`skills/matt-direct-dev-workflow/SKILL.md`、`skills/gitlab-issues/SKILL.md`、`skills/gitlab-matt-workflow/SKILL.md`
 - 前两者是同一套流程的 TDD / 非 TDD 变体；正式约束由调用方仓库的 `AGENTS.md` 与 `docs/**` 提供，本仓库只维护流程本身
 - `gitlab-issues` 按当前目录的 git origin 管理 GitLab Issue，不绑定固定项目，也不提交代码
+- `gitlab-matt-workflow` 先把目标项目的一条 GitLab Issue 落成需求锚点，go 之后从 spec 起跑 `matt-dev-workflow`
 
 ## 运行时副本（不是软链）
 
@@ -24,7 +25,7 @@ Agent 实际读取的是 `~/.agents/skills/<name>/SKILL.md`。它是**独立副�
    mkdir -p ~/.agents/skills/<name> && cp -R skills/<name>/. ~/.agents/skills/<name>/
    ```
 
-   `<name>` 可以是 `matt-dev-workflow`、`matt-direct-dev-workflow` 或 `gitlab-issues`。
+   `<name>` 可以是 `matt-dev-workflow`、`matt-direct-dev-workflow`、`gitlab-issues` 或 `gitlab-matt-workflow`。
 
    先 `mkdir -p` 是因为「重装即丢」之后运行时目录可能已不存在，直接 `cp` 到不存在的目录会失败；用 `cp -R skills/<name>/.` 整目录复制（而不是只复制 `SKILL.md`），是为了将来 skill 带上 `scripts/` / `references/` 时不至于静默漏掉。
 3. 反向回流：如果是在运行时副本上先改的（比如临时试验），必须把改动复制回本仓库 `skills/<name>/SKILL.md`，再走正常 git 流程；否则那份改动不进版本控制，换机器或重装即丢。
@@ -35,6 +36,7 @@ Agent 实际读取的是 `~/.agents/skills/<name>/SKILL.md`。它是**独立副�
    diff -q skills/matt-direct-dev-workflow/SKILL.md ~/.agents/skills/matt-direct-dev-workflow/SKILL.md
    diff -q skills/gitlab-issues/SKILL.md ~/.agents/skills/gitlab-issues/SKILL.md
    diff -q skills/gitlab-issues/scripts/resolve-project.mjs ~/.agents/skills/gitlab-issues/scripts/resolve-project.mjs
+   diff -q skills/gitlab-matt-workflow/SKILL.md ~/.agents/skills/gitlab-matt-workflow/SKILL.md
    ```
 
    `diff` 无输出即一致；有输出说明两边又漂移了，先对齐再继续。
