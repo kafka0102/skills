@@ -37,7 +37,7 @@ description: 把目标项目的一条 GitLab Issue 当作需求锚点，先落�
 
 对得上时，做 `matt-dev-workflow`「切入无人阶段」的两件准备，再从它的阶段 1 跑到最终验收。准备里的共识清单写入 spec。spec 记下需求锚点的 URL，并原文记下 go 当时的正文。spec 可以更细；每一条验收都要能指出它没有和这份正文冲突。
 
-本地票仍按目标仓库的 issue tracker 落在本地。提交按 `matt-dev-workflow` 和目标仓库自己的 git 规范。commit message 按目标仓库的 git 规范写，包括该规范是否要求 `Refs`。go 之后保持需求锚点的标题、正文、评论和开关状态不变，不论自动阶段走完，还是因为矛盾或 `matt-dev-workflow` 的停止条件停下。
+本地票仍按目标仓库的 issue tracker 落在本地。提交按 `matt-dev-workflow` 和目标仓库自己的 git 规范。commit message 按目标仓库的规范写，不由本流程追加 `Refs`。go 之后保持需求锚点的标题、正文、评论和开关状态不变，不论自动阶段走完，还是因为矛盾或 `matt-dev-workflow` 的停止条件停下。
 
 实现途中才发现与 go 当时的正文冲突时，停下整个自动阶段，不再写后续 spec 或票，也不再提交。已经存在的 commit 保留，在汇总里说明，历史保持原样。
 
