@@ -1,0 +1,55 @@
+---
+name: github-matt-workflow
+description: 把目标项目的一条 GitHub Issue 当作需求锚点，先落锚并 grill，用户说 go 后再从 spec 起跑 matt-dev-workflow。Issue 读写一律走 github-issues。消息里已有目标项目的 Issue URL，或「远程 Issue 已创建，更新这一条，不要新建。」时，那一条就是锚点。只改 Issue，或不绑定 GitHub Issue 的本地开发，不用本技能。
+---
+
+# GitHub Matt Workflow
+
+把 `github-issues` 和 `matt-dev-workflow` 接成一条流程。先读这两个技能。本文件只写衔接处的覆盖，其余步骤以那两个技能为准。使用 `matt-dev-workflow`，不改这两个技能的源文件，也不另写一份 `matt-dev-workflow`。Issue 的读取和写入一律走 `github-issues`。
+
+**需求锚点**是目标项目里的一条 GitHub Issue。`matt-dev-workflow` 里的「共识锚点」是 spec 的起点，不是这条 Issue。
+
+## 落锚
+
+在当前工作目录按 `github-issues` 确定目标项目，并落成一条需求锚点。
+
+- 消息里已有目标项目的 Issue URL，或有「远程 Issue 已创建，更新这一条，不要新建。」：这一条就是需求锚点。不新建第二条，也不搜索。
+- URL 的项目和 origin 不一致：停止。说明两边。不新建，不改另一边。
+- 没有现成 Issue 时，才按 `github-issues` 新建或搜索。
+- 已有说清的节时，标题和正文按 `github-issues` 写入。还没有说清的节不写。标题是否同笔修改，只由 `github-issues` 决定。
+
+完成标准：有一条属于目标项目的 Issue，回复里有它的 URL；正文里只有已经说清的节。`github-issues` 要求停止时，本流程也停止。
+
+## 厘清
+
+对着这条需求锚点做 grill。提问格式用 `matt-dev-workflow` 阶段 0：一次一题，编号多选题。术语和 ADR 写在目标项目，不写进技能仓库。
+
+问的是还没说清、并且会改变正文或实现范围的决定。代码和文档里能查到的事实自己查。低风险的呈现选择采用推荐项，留到 spec 的「共识与默认决策」。
+
+某一节被说清，或用户的回答改变了「要做什么」或「验收」，立刻按 `github-issues` 把正文更新成当前范围。不要只在回复里给一版新描述。
+
+这是重写当前已经说清的事实，不是另做一份差异报告。先读现有正文，再整篇替换。仍然有效的旧节保留，被否定的内容不留。用户还没说清的节不写进去。
+
+只准备评论时不改正文。
+
+完成标准：用户说 `go`、`开始`、`继续` 或 `别问了` 之前，不进入 spec。范围变过之后，正文已是当前说清的节。
+
+## go 之后
+
+`go`、`开始`、`继续`、`别问了` 都进入自动阶段。
+
+进入前先把需求锚点正文改到和已经说清的范围一致。先读现有正文。已经一致就不再写。正文还是旧范围，而用户已经答出了新范围时，先按 `github-issues` 整篇替换，再往下走。
+
+还有没答、且会改变范围的题：停在这里继续 grill，不要带着旧正文进入 spec。这时不要写 spec，不要实现。`matt-dev-workflow` 会把「继续」「别问了」的未答题按推荐项带进无人阶段；这里不沿用这一点。不会改变范围的未答题仍按 `matt-dev-workflow` 落成假设。
+
+正文已经和 go 当时说清的范围一致之后，按 `matt-dev-workflow` 的无人阶段执行，跳过它的阶段 0。这份正文就是进入无人阶段时的正文，也就是 go 当时已经说清的范围。
+
+先把做法和这份正文对照。对不上时，停在这里并说明矛盾，回到同一条需求锚点继续 grill。这时不写 spec，不改 Issue，不提交，也不实现其余部分。
+
+对得上时，做 `matt-dev-workflow`「切入无人阶段」的两件准备，再从它的阶段 1 跑到最终验收。准备里的共识清单写入 spec。spec 记下需求锚点的 URL，并原文记下进入无人阶段时的正文。spec 可以更细；每一条验收都要能指出它没有和这份正文冲突。
+
+本地票仍按目标仓库的 issue tracker 落在本地。提交按 `matt-dev-workflow` 和目标仓库自己的 git 规范。commit message 不写 `Fix`、`Fixes`、`Close`、`Closes`、`Resolve`、`Resolves` 加这条 Issue 的编号或 URL。
+
+进入无人阶段之后，保持这条 Issue 的标题、正文、评论和开关状态不变。实现途中发现和这份正文冲突，停下整个自动阶段，不要改 Issue。不再写后续 spec 或票，也不再提交。已经存在的 commit 保留，在汇总里说明，历史保持原样。
+
+完成标准：要么 spec、本地票和实现都按 `matt-dev-workflow` 的完成判定走完，且 go 之后回读的 Issue 与进入无人阶段时一致；要么停在矛盾或 `matt-dev-workflow` 的停止条件处，没有新的违规提交。汇总里写出 Issue URL。验收之后可以建议用户跑 `/retro`，由用户自己跑。
